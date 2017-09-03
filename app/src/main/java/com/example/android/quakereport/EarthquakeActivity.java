@@ -15,30 +15,55 @@
  */
 package com.example.android.quakereport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 public class EarthquakeActivity extends AppCompatActivity {
 
-    public static final String LOG_TAG = EarthquakeActivity.class.getName();
+   // public static final String LOG_TAG = EarthquakeActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        //Creating a fake list of list earthquakes magnitude,location, date and time
-        ArrayList<EarthquakeInfo> earthquakesinfo = QueryUtils.extractEarthquakes();
+        //Creating a fake list of list earthquakes magnitude,location, date and time and url
+        ArrayList<EarthquakeInfo> earthquakesInfo = QueryUtils.extractEarthquakes();
 
         // Create an {@link EarthquakeInfoAdapter}, whose data source is a list of {@link EarthquakeInfo}s.
         // The adapter knows how to create list item views for each item in the list earthquake activity.
-        EarthquakeInfoAdapter adapter = new EarthquakeInfoAdapter(this, earthquakesinfo);
+        // Create a new adapter that takes the list of earthquakes as input.
+        final EarthquakeInfoAdapter adapter = new EarthquakeInfoAdapter(this, earthquakesInfo);
 
         // Get a reference to the ListView, and attach the adapter to the listView.
-        ListView listView = (ListView) findViewById(R.id.list_item);
-        listView.setAdapter(adapter);
+        ListView earthquakeListView = (ListView) findViewById(R.id.list_item);
+        // Set the adapter on the {@link ListView}
+        // so the list can be populated in the user interface
+        earthquakeListView.setAdapter(adapter);
+
+        //creating a URL intent when the list view is pressed, it will send the user to the designated website
+        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // Find the current earthquake that was clicked on
+                EarthquakeInfo currentEarthquake = adapter.getItem(position);
+
+                // Convert the String URL into a URI object (to pass into the Intent constructor)
+                Uri earthquakeUri = Uri.parse(currentEarthquake.getmUrl());
+
+                // Create a new intent to view the earthquake URI
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+
+                // Send the intent to launch a new activity
+                startActivity(websiteIntent);
+            }
+        });
     }
 }
