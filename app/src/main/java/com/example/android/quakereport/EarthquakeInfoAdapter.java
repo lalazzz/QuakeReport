@@ -106,6 +106,7 @@ public class EarthquakeInfoAdapter extends ArrayAdapter<EarthquakeInfo> {
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.list, parent, false);
         }
+
         EarthquakeInfo currentEInfo = getItem(position);
 
         // Find the TextView in the list.xml layout with the magnitude
@@ -114,6 +115,14 @@ public class EarthquakeInfoAdapter extends ArrayAdapter<EarthquakeInfo> {
         String formattedMagnitude = formatMagnitude(currentEInfo.getmMagnitude());
         // Display the magnitude of the current earthquake in that TextView
         magnitudeTextView.setText(formattedMagnitude);
+
+        // Set the proper background color on the magnitude circle.
+        // Fetch the background from the TextView, which is a GradientDrawable.
+        GradientDrawable magnitudeCircle = (GradientDrawable) magnitudeTextView.getBackground();
+        // Get the appropriate background color based on the current earthquake magnitude
+        int magnitudeColor = getmMagnitudeColor(currentEInfo.getmMagnitude());
+        // Set the color on the magnitude circle
+        magnitudeCircle.setColor(magnitudeColor);
 
         // Find the TextView in the list.xml layout with the ID coordinate
         TextView coordinateTextView = (TextView) listItemView.findViewById(R.id.coordinate);
@@ -140,15 +149,6 @@ public class EarthquakeInfoAdapter extends ArrayAdapter<EarthquakeInfo> {
         String formattedTime = formatTime(dateObject);
         // Display the time of the current earthquake in that TextView
         timeView.setText(formattedTime);
-
-        // Set the proper background color on the magnitude circle.
-        // Fetch the background from the TextView, which is a GradientDrawable.
-        GradientDrawable magnitudeCircle = (GradientDrawable) magnitudeTextView.getBackground();
-        // Get the appropriate background color based on the current earthquake magnitude
-        int magnitudeColor = getmMagnitudeColor(currentEInfo.getmMagnitude());
-        // Set the color on the magnitude circle
-        magnitudeCircle.setColor(magnitudeColor);
-
 
         // Return the whole list item layout (containing 3 TextViews) that is shown in the ListView
         return listItemView;
